@@ -9,18 +9,25 @@ WiFiUDP udp;
 void setup() {
   // Turn on all the lights for a second when booting
   analogWrite(12, PWMRANGE);
+  delay(100);
   analogWrite(13, PWMRANGE);
+  delay(100);
   analogWrite(14, PWMRANGE);
-
-  delay(1000); // very important bit for Access Point to work properly... ¯\_(ツ)_/¯
-
+  delay(100);
+  analogWrite(16, PWMRANGE);
+  delay(100);
   analogWrite(12, 0);
+  delay(100);
   analogWrite(13, 0);
+  delay(100);
   analogWrite(14, 0);
+  delay(100);
+  analogWrite(16, 0);
+  delay(100);
   
   Serial.begin(115200);
   Serial.println();
-  Serial.println("Hello OSC2Midi!");
+  Serial.println("Hello pretty lights!");
   Serial.println();
 
   WiFi.softAP("Pretty Lights", "anyoneiswelcome");
@@ -37,15 +44,24 @@ void OSCToPWM(OSCMessage &msg, int offset) {
 
   msg.getAddress(address, offset, sizeof(address));
   
-  Serial.printf("Got address: %s\n", address);
-
   if (msg.size() != 1 || !msg.isFloat(0)) {
     Serial.printf("Unexpected message format. Should be single float value only.\n");
     return;
   }
 
-  value = round(msg.getFloat(0) * PWMRANGE);
-  Serial.printf("Got value: %i\n", value);
+  // WolframAlpha:
+  // plot y(x)=1/(1+e^((-12)*(x-0.5))) from x=0 to 1
+  
+  value = round((1.0 / (1.0 + exp(-12.0 * (msg.getFloat(0) - 0.5)))) * PWMRANGE);
+
+  // special values because I'm bad at math:
+  if (msg.getFloat(0) == 0.0) {
+    value = 0;
+  } else if (msg.getFloat(0) >= 1.0) {
+    value = PWMRANGE;
+  }
+
+  Serial.printf("Address: %s\tValue: %f\tTranslated to: %d\n", address, msg.getFloat(0), value);
 
   if (strcmp(address, "/r") == 0) {
     analogWrite(12, value);
@@ -53,6 +69,8 @@ void OSCToPWM(OSCMessage &msg, int offset) {
     analogWrite(13, value);
   } else if (strcmp(address, "/b") == 0) {
     analogWrite(14, value);
+  } else if (strcmp(address, "/w") == 0) {
+    analogWrite(16, value);
   } else {
     Serial.printf("Unexpected colour: %s\n", address);
   }
