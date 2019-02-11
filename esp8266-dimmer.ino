@@ -1,10 +1,12 @@
 #include <ESP8266WiFi.h>
+#include <WiFiManager.h> 
 #include <WiFiUdp.h>
 #include <OSCMessage.h>
 #include <OSCBundle.h>
 #include <OSCData.h>
 
 WiFiUDP udp;
+WiFiManager wifiManager;
 
 void setup() {
   // Turn on all the lights for a second when booting
@@ -24,17 +26,13 @@ void setup() {
   delay(100);
   analogWrite(16, 0);
   delay(100);
-  
+
   Serial.begin(115200);
-  Serial.println();
-  Serial.println("Hello pretty lights!");
-  Serial.println();
+  Serial.printf("\nHello pretty lights!\n");
 
-  WiFi.softAP("Pretty Lights", "anyoneiswelcome");
-  Serial.print("AP IP address: ");
-  Serial.println(WiFi.softAPIP());
+  WiFi.hostname("prettylights");
+  wifiManager.autoConnect("Pretty Lights");
 
-  Serial.println();
   udp.begin(8000);
 }
 
@@ -43,7 +41,7 @@ void OSCToPWM(OSCMessage &msg, int offset) {
   uint16_t value;
 
   msg.getAddress(address, offset, sizeof(address));
-  
+
   if (msg.size() != 1 || !msg.isFloat(0)) {
     Serial.printf("Unexpected message format. Should be single float value only.\n");
     return;
@@ -51,7 +49,7 @@ void OSCToPWM(OSCMessage &msg, int offset) {
 
   // WolframAlpha:
   // plot y(x)=1/(1+e^((-12)*(x-0.5))) from x=0 to 1
-  
+
   value = round((1.0 / (1.0 + exp(-12.0 * (msg.getFloat(0) - 0.5)))) * PWMRANGE);
 
   // special values because I'm bad at math:
