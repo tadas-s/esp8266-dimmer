@@ -1,5 +1,5 @@
 #include <ESP8266WiFi.h>
-#include <WiFiManager.h> 
+#include <WiFiManager.h>
 #include <WiFiUdp.h>
 #include <OSCMessage.h>
 #include <OSCBundle.h>
@@ -38,7 +38,6 @@ void setup() {
 
 void OSCToPWM(OSCMessage &msg, int offset) {
   char address[100] = { 0 };
-  uint16_t value;
 
   msg.getAddress(address, offset, sizeof(address));
 
@@ -48,27 +47,25 @@ void OSCToPWM(OSCMessage &msg, int offset) {
   }
 
   // WolframAlpha:
-  // plot y(x)=1/(1+e^((-12)*(x-0.5))) from x=0 to 1
+  // y(x)=(1/(1+e^((-11)*(x-0.5))) - 0.00407)*1.0078 from x=0 to 1
+  // What WA solves for y(0)=0 and y(1)=1 needs to be adjusted slightly. Probs
+  // because of floats precision ¯\_(ツ)_/¯
+  float interm = 1.0 / (1.0 + exp(-12.0 * (msg.getFloat(0) - 0.5))) - 0.002;
+  uint16_t pwm_value = round((interm) * 1.0043 * PWMRANGE);
 
-  value = round((1.0 / (1.0 + exp(-12.0 * (msg.getFloat(0) - 0.5)))) * PWMRANGE);
-
-  // special values because I'm bad at math:
-  if (msg.getFloat(0) == 0.0) {
-    value = 0;
-  } else if (msg.getFloat(0) >= 1.0) {
-    value = PWMRANGE;
-  }
-
-  Serial.printf("Address: %s\tValue: %f\tTranslated to: %d\n", address, msg.getFloat(0), value);
+  Serial.printf(
+    "Address: %s\tValue: %f\t%f\tTranslated to: %d\n",
+    address, msg.getFloat(0), interm, pwm_value
+  );
 
   if (strcmp(address, "/r") == 0) {
-    analogWrite(12, value);
+    analogWrite(12, pwm_value);
   } else if (strcmp(address, "/g") == 0) {
-    analogWrite(13, value);
+    analogWrite(13, pwm_value);
   } else if (strcmp(address, "/b") == 0) {
-    analogWrite(14, value);
+    analogWrite(14, pwm_value);
   } else if (strcmp(address, "/w") == 0) {
-    analogWrite(16, value);
+    analogWrite(16, pwm_value);
   } else {
     Serial.printf("Unexpected colour: %s\n", address);
   }
