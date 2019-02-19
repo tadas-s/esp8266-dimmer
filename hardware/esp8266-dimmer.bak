@@ -42,7 +42,7 @@ U 1 1 5B159B20
 P 7575 2450
 F 0 "R4" V 7655 2450 50  0000 C CNN
 F 1 "220R" V 7575 2450 50  0000 C CNN
-F 2 "Resistors_SMD:R_0805_HandSoldering" V 7505 2450 50  0001 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" V 7505 2450 50  0001 C CNN
 F 3 "" H 7575 2450 50  0001 C CNN
 	1    7575 2450
 	0    1    1    0   
@@ -75,7 +75,7 @@ U 1 1 5B15AB15
 P 7575 3250
 F 0 "R5" V 7655 3250 50  0000 C CNN
 F 1 "220R" V 7575 3250 50  0000 C CNN
-F 2 "Resistors_SMD:R_0805_HandSoldering" V 7505 3250 50  0001 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" V 7505 3250 50  0001 C CNN
 F 3 "" H 7575 3250 50  0001 C CNN
 	1    7575 3250
 	0    1    1    0   
@@ -97,7 +97,7 @@ U 1 1 5B15AD48
 P 7600 4050
 F 0 "R6" V 7680 4050 50  0000 C CNN
 F 1 "220R" V 7600 4050 50  0000 C CNN
-F 2 "Resistors_SMD:R_0805_HandSoldering" V 7530 4050 50  0001 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" V 7530 4050 50  0001 C CNN
 F 3 "" H 7600 4050 50  0001 C CNN
 	1    7600 4050
 	0    1    1    0   
@@ -119,7 +119,7 @@ U 1 1 5B15AF3D
 P 7575 4850
 F 0 "R7" V 7655 4850 50  0000 C CNN
 F 1 "220R" V 7575 4850 50  0000 C CNN
-F 2 "Resistors_SMD:R_0805_HandSoldering" V 7505 4850 50  0001 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" V 7505 4850 50  0001 C CNN
 F 3 "" H 7575 4850 50  0001 C CNN
 	1    7575 4850
 	0    1    1    0   
@@ -172,7 +172,7 @@ $EndComp
 Wire Wire Line
 	5375 4325 5375 4425
 Text Notes 2625 3925 0    61   ~ 0
-GND\nFLASH\nVCC\nTXD\nRXD\nRESET
+RESET\nRXD\nTXD\nVCC\nFLASH\nGND
 Text GLabel 3275 3800 2    43   Input ~ 0
 FLASH
 Text GLabel 3275 3600 2    43   Input ~ 0
@@ -200,7 +200,7 @@ U 1 1 5B164780
 P 5025 2725
 F 0 "R1" V 5105 2725 50  0000 C CNN
 F 1 "10K" V 5025 2725 50  0000 C CNN
-F 2 "Resistors_SMD:R_0805_HandSoldering" V 4955 2725 50  0001 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" V 4955 2725 50  0001 C CNN
 F 3 "" H 5025 2725 50  0001 C CNN
 	1    5025 2725
 	0    1    1    0   
@@ -211,7 +211,7 @@ U 1 1 5B164B2B
 P 5725 2725
 F 0 "R2" V 5805 2725 50  0000 C CNN
 F 1 "10K" V 5725 2725 50  0000 C CNN
-F 2 "Resistors_SMD:R_0805_HandSoldering" V 5655 2725 50  0001 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" V 5655 2725 50  0001 C CNN
 F 3 "" H 5725 2725 50  0001 C CNN
 	1    5725 2725
 	0    1    1    0   
@@ -225,7 +225,7 @@ U 1 1 5B164F36
 P 6225 3925
 F 0 "R3" V 6175 4150 50  0000 C CNN
 F 1 "10K" V 6225 3925 50  0000 C CNN
-F 2 "Resistors_SMD:R_0805_HandSoldering" V 6155 3925 50  0001 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" V 6155 3925 50  0001 C CNN
 F 3 "" H 6225 3925 50  0001 C CNN
 	1    6225 3925
 	0    1    1    0   
@@ -344,7 +344,7 @@ $EndComp
 Wire Wire Line
 	3050 1175 3050 1275
 Connection ~ 3400 1275
-Text Label 3350 1250 2    60   ~ 0
+Text Label 2900 1275 2    60   ~ 0
 P12V
 Text Label 8525 2200 2    60   ~ 0
 PR
@@ -474,7 +474,6 @@ $EndComp
 Wire Wire Line
 	3050 1375 3050 1275
 Connection ~ 3050 1275
-NoConn ~ 4775 3225
 NoConn ~ 4775 3425
 NoConn ~ 4775 3625
 NoConn ~ 4775 3725
@@ -519,13 +518,13 @@ Wire Wire Line
 Connection ~ 4000 1675
 Wire Wire Line
 	4000 1675 4200 1675
-Text GLabel 6075 3625 2    39   Input ~ 0
+Text GLabel 6075 3825 2    39   Input ~ 0
 R_PWM
 Text GLabel 7325 3250 0    50   Input ~ 0
 G_PWM
 Text GLabel 7350 4050 0    50   Input ~ 0
 B_PWM
-Text GLabel 6075 4025 2    39   Input ~ 0
+Text GLabel 6075 3725 2    39   Input ~ 0
 W_PWM
 Text GLabel 7325 2450 0    50   Input ~ 0
 R_PWM
@@ -533,13 +532,13 @@ Wire Wire Line
 	5975 3625 6075 3625
 Wire Wire Line
 	7325 2450 7425 2450
-Text GLabel 6075 3725 2    39   Input ~ 0
+Text GLabel 6075 4025 2    39   Input ~ 0
 G_PWM
 Wire Wire Line
 	5975 3725 6075 3725
 Wire Wire Line
 	7325 3250 7425 3250
-Text GLabel 6075 3825 2    39   Input ~ 0
+Text GLabel 6075 3625 2    39   Input ~ 0
 B_PWM
 Wire Wire Line
 	5975 3825 6075 3825
@@ -606,4 +605,30 @@ Wire Wire Line
 	2650 1425 2650 1275
 Wire Wire Line
 	2650 1275 3050 1275
+$Comp
+L Device:R R8
+U 1 1 5C6C9D1C
+P 4525 3225
+F 0 "R8" V 4605 3225 50  0000 C CNN
+F 1 "10K" V 4525 3225 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" V 4455 3225 50  0001 C CNN
+F 3 "" H 4525 3225 50  0001 C CNN
+	1    4525 3225
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	4675 3225 4775 3225
+$Comp
+L power1:VCC #PWR07
+U 1 1 5C6CDE48
+P 4275 3225
+F 0 "#PWR07" H 4275 3075 50  0001 C CNN
+F 1 "VCC" V 4350 3300 50  0000 C CNN
+F 2 "" H 4275 3225 50  0001 C CNN
+F 3 "" H 4275 3225 50  0001 C CNN
+	1    4275 3225
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	4275 3225 4375 3225
 $EndSCHEMATC
