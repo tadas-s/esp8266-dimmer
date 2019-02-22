@@ -4,9 +4,26 @@
 #include <OSCMessage.h>
 #include <OSCBundle.h>
 #include <OSCData.h>
+#include <CRC32.h>
+#include <EEPROM.h>
+
+struct Settings {
+  /*
+    CRC for settings. So it's possible to detect un-initialized settings.
+  */
+  uint32_t crc;
+
+  /*
+    Deviced ID from 0 to 255. In reality there will be less IDs usable since
+    devices won't fit into the subnet. Unless it's possible to have UDP broadcasts
+    in wider than 8 bit subnets?
+  */
+  uint8_t id;
+};
 
 WiFiUDP udp;
 WiFiManager wifiManager;
+Settings settings;
 
 void setup() {
   analogWrite(12, 0);
@@ -38,6 +55,31 @@ void setup() {
   analogWrite(16, PWMRANGE);
   delay(250);
   analogWrite(16, 0);
+
+  SettingsInit();
+}
+
+void SettingsInit() {
+  uint32_t checksum;
+
+  EEPROM.begin(sizeof(Settings));
+  EEPROM.get(0, settings);
+
+  checksum = CRC32::calculate(&settings + sizeof(uint32_t), sizeof(Settings) - sizeof(uint32_t));
+
+  if (checksum != settings.crc) {
+    Serial.printf("\nSettings not initialized: %du != %du\n", checksum, settings.crc);
+    memset(&settings, 0, sizeof(Settings));
+    SettingsUpdate();
+  }
+
+  Serial.printf("my id: %i\n", settings.id);
+}
+
+void SettingsUpdate() {
+  settings.crc = CRC32::calculate(&settings + sizeof(uint32_t), sizeof(Settings) - sizeof(uint32_t));
+  EEPROM.put(0, settings);
+  EEPROM.commit();
 }
 
 void OSCToPWM(OSCMessage &msg, int offset) {
@@ -75,6 +117,26 @@ void OSCToPWM(OSCMessage &msg, int offset) {
   }
 }
 
+void OSCToDeviceSettings(OSCMessage &msg, int offset) {
+  char address[100] = { 0 };
+
+  msg.getAddress(address, offset, sizeof(address));
+
+  if (msg.size() == 1 && msg.isInt(0) && strcmp(address, "/id") == 0) {
+    uint32_t id = msg.getInt(0);
+
+    if (id < 255) {
+      settings.id = (uint8_t)id;
+      SettingsUpdate();
+      Serial.printf("Setting device id to: %i\n", id);
+    } else {
+      Serial.printf("Deviced id out of range: %i\n", id);
+    }
+  } else {
+    Serial.printf("Unexpected settings message address / format\n");
+    return;
+  }
+}
 
 void loop() {
   OSCMessage msg;
@@ -88,6 +150,7 @@ void loop() {
 
     if (!msg.hasError()) {
       msg.route("/fade", OSCToPWM);
+      msg.route("/settings", OSCToDeviceSettings);
     } else {
       int error = msg.getError();
       Serial.print("error: ");
