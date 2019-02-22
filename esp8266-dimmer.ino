@@ -9,23 +9,10 @@ WiFiUDP udp;
 WiFiManager wifiManager;
 
 void setup() {
-  // Turn on all the lights for a second when booting
-  analogWrite(12, PWMRANGE);
-  delay(100);
-  analogWrite(13, PWMRANGE);
-  delay(100);
-  analogWrite(14, PWMRANGE);
-  delay(100);
-  analogWrite(16, PWMRANGE);
-  delay(100);
   analogWrite(12, 0);
-  delay(100);
   analogWrite(13, 0);
-  delay(100);
   analogWrite(14, 0);
-  delay(100);
   analogWrite(16, 0);
-  delay(100);
 
   Serial.begin(115200);
   Serial.printf("\nHello pretty lights!\n");
@@ -34,6 +21,23 @@ void setup() {
   wifiManager.autoConnect("Pretty Lights");
 
   udp.begin(8000);
+
+  // Turn on all the lights for a second when booting
+  analogWrite(12, PWMRANGE);
+  delay(250);
+  analogWrite(12, 0);
+
+  analogWrite(13, PWMRANGE);
+  delay(250);
+  analogWrite(13, 0);
+
+  analogWrite(14, PWMRANGE);
+  delay(250);
+  analogWrite(14, 0);
+
+  analogWrite(16, PWMRANGE);
+  delay(250);
+  analogWrite(16, 0);
 }
 
 void OSCToPWM(OSCMessage &msg, int offset) {
