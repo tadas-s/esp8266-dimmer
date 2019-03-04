@@ -6,6 +6,7 @@
 #include <OSCData.h>
 #include <CRC32.h>
 #include <EEPROM.h>
+#include <PacketSerial.h>
 
 struct Settings {
   /*
@@ -24,6 +25,9 @@ struct Settings {
 WiFiUDP udp;
 WiFiManager wifiManager;
 Settings settings;
+
+PacketSerial packetSerial;
+void onPacketReceived(const uint8_t* buffer, size_t size);
 
 void setup() {
   analogWrite(12, 0);
@@ -57,6 +61,9 @@ void setup() {
   analogWrite(16, 0);
 
   SettingsInit();
+
+  packetSerial.begin(115200);
+  packetSerial.setPacketHandler(&onPacketReceived);
 }
 
 void SettingsInit() {
@@ -139,6 +146,37 @@ void OSCToDeviceSettings(OSCMessage &msg, int offset) {
   }
 }
 
+void onPacketReceived(const uint8_t* buffer, size_t size)
+{
+    if (size < 1) {
+      return;
+    }
+
+    // 3 -> request to get device id
+    if (size == 1 && buffer[0] == 3) {
+      uint8_t response[2];
+      response[0] = 5;
+      response[1] = settings.id;
+      packetSerial.send(response, 2);
+    }
+
+    // 4 -> request to set new device id
+    if (size == 2 && buffer[0] == 4 && settings.id != buffer[1]) {
+      uint8_t response[1];
+      response[0] = 1; // acknowledge message
+      settings.id = buffer[1];
+      SettingsUpdate();
+      packetSerial.send(response, 1);
+    }
+
+    // 4 -> request to set decvice id, but it's already set to the same id
+    if (size == 2 && buffer[0] == 4 && settings.id == buffer[1]) {
+      uint8_t response[1];
+      response[0] = 1; // acknowledge message
+      packetSerial.send(response, 1);
+    }
+}
+
 void loop() {
   OSCMessage msg;
   uint8_t buffer[1024];
@@ -162,4 +200,6 @@ void loop() {
       Serial.println(error);
     }
   }
+
+  packetSerial.update();
 }
